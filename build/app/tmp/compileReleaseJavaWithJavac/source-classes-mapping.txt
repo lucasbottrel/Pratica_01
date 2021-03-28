@@ -1,0 +1,4 @@
+io/flutter/plugins/GeneratedPluginRegistrant.java
+ io.flutter.plugins.GeneratedPluginRegistrant
+pucminas/br/racha_conta/BuildConfig.java
+ pucminas.br.racha_conta.BuildConfig
