@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       double _valorGarcom = ( _currentSliderValue / 100) * double.parse( _valorConta.text);
       double _valorTotal = double.parse( _valorConta.text) + _valorGarcom;
-      double _valorIndividual = double.parse( _valorConta.text) / double.parse( _quantPessoas.text);
+      double _valorIndividual = _valorTotal / double.parse( _quantPessoas.text);
 
       String res = "Valor Garçom :                                        R\$ " + _valorGarcom.toStringAsPrecision(4) +
                    "\n\nValor Total:                                              R\$ " + _valorTotal.toStringAsPrecision(4) +
