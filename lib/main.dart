@@ -146,12 +146,26 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       double _valorGarcom = ( _currentSliderValue / 100) * double.parse( _valorConta.text);
       double _valorTotal = double.parse( _valorConta.text) + _valorGarcom;
-      double _valorIndividualBebem = _valorTotal / double.parse( _quantPessoasBebem.text);
 
-      String res = "Valor Garçom :                                        R\$ " + _valorGarcom.toStringAsPrecision(4) +
-                   "\n\nValor Total:                                              R\$ " + _valorTotal.toStringAsPrecision(4) +
-                   "\n\nValor Individual (bebem):                         R\$ " + _valorIndividualBebem.toStringAsPrecision(4) +
-                   "\n\nValor Individual (não bebem):                     R\$ " + _valorIndividualBebem.toStringAsPrecision(4);
+      double bebem = double.parse( _quantPessoasBebem.text);
+      double naobebem = double.parse( _quantPessoasNaoBebem.text);
+
+      double _valorIndividualBebem = 0;
+      double _valorIndividualNaoBebem = 0;
+
+      if (bebem == 0 && naobebem > 0){
+        _valorIndividualNaoBebem = _valorTotal / naobebem;
+      } else if (naobebem == 0 && bebem>0){
+        _valorIndividualBebem = _valorTotal / bebem;
+      } else {
+        _valorIndividualBebem = (_valorTotal * 0.6) / bebem;
+        _valorIndividualNaoBebem = (_valorTotal * 0.4) / naobebem;
+      }
+
+      String res = "Valor Garçom :                                             R\$ " + _valorGarcom.toStringAsPrecision(4) +
+                   "\n\nValor Total:                                                   R\$ " + _valorTotal.toStringAsPrecision(4) +
+                   "\n\nValor Individual (bebem):                          R\$ " + _valorIndividualBebem.toStringAsPrecision(4) +
+                   "\n\nValor Individual (não bebem):                  R\$ " + _valorIndividualNaoBebem.toStringAsPrecision(4);
 
       _infoText = res;
     });
