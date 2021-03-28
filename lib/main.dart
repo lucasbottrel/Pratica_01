@@ -158,8 +158,10 @@ class _HomePageState extends State<HomePage> {
       } else if (naobebem == 0 && bebem>0){
         _valorIndividualBebem = _valorTotal / bebem;
       } else {
-        _valorIndividualBebem = (_valorTotal * 0.6) / bebem;
-        _valorIndividualNaoBebem = (_valorTotal * 0.4) / naobebem;
+        double valorindividualbase = _valorTotal / (bebem+naobebem);
+        _valorIndividualNaoBebem = valorindividualbase * 0.4;
+        double aux = (valorindividualbase - _valorIndividualNaoBebem) * naobebem;
+        _valorIndividualBebem = (valorindividualbase * bebem + aux) / bebem;
       }
 
       String res = "Valor Garçom :                                             R\$ " + _valorGarcom.toStringAsPrecision(4) +
