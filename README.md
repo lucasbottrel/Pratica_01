@@ -1,4 +1,4 @@
-# racha_conta
+# Racha Conta
 
 A new Flutter application.
 
