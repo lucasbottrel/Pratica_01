@@ -29,7 +29,8 @@ class _HomePageState extends State<HomePage> {
   final _valorConta = TextEditingController();
   final _quantPessoasBebem = TextEditingController();
   final _quantPessoasNaoBebem = TextEditingController();
-  double _currentSliderValue = 0;
+  final _valorBebidas = TextEditingController();
+  double _porcentagemGarcom = 0;
   var _infoText = "";
   var _formKey = GlobalKey<FormState>();
 
@@ -53,6 +54,7 @@ class _HomePageState extends State<HomePage> {
     _valorConta.text = "";
     _quantPessoasBebem.text="";
     _quantPessoasNaoBebem.text="";
+    _valorBebidas.text="";
     setState(() {
       _infoText = "";
       _formKey = GlobalKey<FormState>();
@@ -67,19 +69,20 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              _editText("Digite o valor da conta: ", _valorConta),
-              _editText("Digite o número de pessoas que bebem: ", _quantPessoasBebem),
-              _editText("Digite o número de pessoas que não bebem: ", _quantPessoasNaoBebem),
+              _editText("Digite o valor total da conta ", _valorConta),
+              _editText("Digite o valor das bebidas", _valorBebidas),
+              _editText("Digite o número de pessoas que bebem ", _quantPessoasBebem),
+              _editText("Digite o número de pessoas que não bebem ", _quantPessoasNaoBebem),
               Text("\nPorcentagem do garçon", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15), ),
-              Slider(value: _currentSliderValue,
-                     min: 0,
-                     max: 40,
-                     divisions: 8,
-                     label: _currentSliderValue.round().toString(),
-                     onChanged: (double value){
-                      setState(() {
-                        _currentSliderValue=value.roundToDouble();
-                      });
+              Slider(value: _porcentagemGarcom,
+                  min: 0,
+                  max: 40,
+                  divisions: 8,
+                  label: _porcentagemGarcom.round().toString(),
+                  onChanged: (double value){
+                    setState(() {
+                      _porcentagemGarcom=value.roundToDouble();
+                    });
                   }
               ),
               _buttonCalcular(),
@@ -144,30 +147,37 @@ class _HomePageState extends State<HomePage> {
   // PROCEDIMENTO PARA CALCULAR O IMC
   void _calculate(){
     setState(() {
-      double _valorGarcom = ( _currentSliderValue / 100) * double.parse( _valorConta.text);
-      double _valorTotal = double.parse( _valorConta.text) + _valorGarcom;
+      double valorGarcom = ( _porcentagemGarcom / 100) * double.parse( _valorConta.text);
+      double valorTotal = double.parse( _valorConta.text) + valorGarcom;
+      double valorbebidas = double.parse( _valorBebidas.text);
+      double num_bebem = double.parse( _quantPessoasBebem.text);
+      double num_naobebem = double.parse( _quantPessoasNaoBebem.text);
 
-      double bebem = double.parse( _quantPessoasBebem.text);
-      double naobebem = double.parse( _quantPessoasNaoBebem.text);
+      double valorIndividualNaoBebem = 0;
+      double valorIndividualBebem = 0;
+      double valorIndividualBase = 0;
 
-      double _valorIndividualBebem = 0;
-      double _valorIndividualNaoBebem = 0;
+      if (num_bebem == 0 && num_naobebem > 0) {
+        valorIndividualBase = valorTotal  / (num_bebem + num_naobebem);
+        valorIndividualNaoBebem = valorIndividualBase;
+        valorIndividualBebem = 0;
 
-      if (bebem == 0 && naobebem > 0){
-        _valorIndividualNaoBebem = _valorTotal / naobebem;
-      } else if (naobebem == 0 && bebem>0){
-        _valorIndividualBebem = _valorTotal / bebem;
+      } else if (num_bebem > 0 && num_naobebem == 0) {
+        valorIndividualBase = valorTotal  / (num_bebem + num_naobebem);
+        valorIndividualNaoBebem = 0;
+        valorIndividualBebem = valorIndividualBase;
+
       } else {
-        double valorindividualbase = _valorTotal / (bebem+naobebem);
-        _valorIndividualNaoBebem = valorindividualbase * 0.4;
-        double aux = (valorindividualbase - _valorIndividualNaoBebem) * naobebem;
-        _valorIndividualBebem = (valorindividualbase * bebem + aux) / bebem;
+        valorIndividualBase = (valorTotal - valorbebidas) / (num_bebem + num_naobebem);
+        valorIndividualNaoBebem = valorIndividualBase;
+        valorIndividualBebem = valorIndividualBase + (valorbebidas / num_naobebem);
       }
 
-      String res = "Valor Garçom :                                             R\$ " + _valorGarcom.toStringAsPrecision(4) +
-                   "\n\nValor Total:                                                   R\$ " + _valorTotal.toStringAsPrecision(4) +
-                   "\n\nValor Individual (bebem):                          R\$ " + _valorIndividualBebem.toStringAsPrecision(4) +
-                   "\n\nValor Individual (não bebem):                  R\$ " + _valorIndividualNaoBebem.toStringAsPrecision(4);
+
+      String res = "Valor Garçom :                                             R\$ " + valorGarcom.toStringAsPrecision(4) +
+          "\n\nValor Total:                                                   R\$ " + valorTotal.toStringAsPrecision(4) +
+          "\n\nValor Individual (bebem):                          R\$ " + valorIndividualBebem.toStringAsPrecision(4) +
+          "\n\nValor Individual (não bebem):                  R\$ " + valorIndividualNaoBebem.toStringAsPrecision(4);
 
       _infoText = res;
     });
